@@ -1,0 +1,106 @@
+Project Overview:
+Create a dynamic website based on a content management scenario (e.g., blog, e-commerce, portfolio site). The website should consist of both frontend and backend components. Use the Node.js backend with Express for server-side logic and HTML, CSS, and JavaScript for frontend development. The website should be deployed on Replit.
+
+Frontend Files:
+1. HTML (index.html):
+Structure the webpage, ensuring to include:
+
+A homepage that dynamically lists content (e.g., blog posts or products).
+
+Forms to create and update content.
+
+Buttons to delete content.
+
+A responsive navigation bar with links to various sections.
+
+User-friendly UI with clear call-to-actions (e.g., login, register, create post, etc.).
+
+2. CSS (styles.css):
+Apply styling for:
+
+General page layout (header, main content, footer).
+
+Responsive design using media queries to make the site mobile-friendly.
+
+Form styling to make it visually appealing and easy to use.
+
+Buttons and links that are interactive and user-friendly.
+
+Ensure the layout is clean and professional using CSS Grid or Flexbox for layouts.
+
+3. JavaScript (scripts.js):
+Handle frontend interactivity such as:
+
+Form validation (checking if all fields are filled before submission).
+
+Dynamic content loading (using JavaScript to fetch data from the backend and display it).
+
+Delete and update content on the page without reloading (AJAX/fetch API).
+
+Show feedback after user actions (e.g., success message after posting, or error handling).
+
+Backend Files:
+1. Node.js (app.js):
+Server Setup:
+
+Initialize a basic Express.js app.
+
+Use body-parser for parsing incoming requests (e.g., form submissions).
+
+Set up routes to handle:
+
+GET requests to retrieve data (e.g., /posts).
+
+POST requests to create new data (e.g., /create).
+
+PUT requests to update data (e.g., /update/:id).
+
+DELETE requests to remove data (e.g., /delete/:id).
+
+Use EJS (or another templating engine like Pug) to render dynamic content on the frontend if needed.
+
+2. Database (JSON File or MongoDB):
+Use a JSON file (or MongoDB for larger scale applications) to store content, such as:
+
+Blog posts, user profiles, or product data.
+
+Each item should have a title, content, and other necessary fields (e.g., for products: name, description, price).
+
+For MongoDB:
+
+Set up MongoDB Atlas (for cloud storage) or a local MongoDB instance.
+
+Install necessary packages (mongoose for MongoDB integration).
+
+3. API Routes:
+GET /posts: Retrieve all content from the database.
+
+POST /create: Handle form submission for creating new posts/products.
+
+PUT /update/:id: Update an existing post/product by ID.
+
+DELETE /delete/:id: Delete a post/product by ID.
+
+Testing and Deployment Files:
+1. Test Cases (optional):
+Set up unit tests for routes and database logic (using Mocha or Jest).
+
+Test CRUD operations to ensure data is properly created, updated, and deleted.
+
+Test form validation and error handling.
+
+2. Deployment on Replit:
+Use Replit’s deployment feature to make the website publicly accessible.
+
+Ensure the backend API is hosted and accessible by the frontend.
+
+3. README.md:
+Write a brief README to explain:
+
+The purpose of the website.
+
+Technologies used (Node.js, Express, MongoDB, HTML, CSS, JavaScript).
+
+Instructions for setting up and running the project locally or on Replit.
+
+URL of the deployed website.

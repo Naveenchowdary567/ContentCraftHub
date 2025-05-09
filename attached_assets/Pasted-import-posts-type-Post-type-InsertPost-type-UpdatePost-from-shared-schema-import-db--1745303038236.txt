@@ -1,0 +1,128 @@
+import { posts, type Post, type InsertPost, type UpdatePost } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
+
+export interface IStorage {
+  // Post CRUD operations
+  getAllPosts(): Promise<Post[]>; 
+  getPostById(id: number): Promise<Post | undefined>;
+  getPostsByCategory(category: string): Promise<Post[]>;
+  createPost(post: InsertPost): Promise<Post>;
+  updatePost(id: number, post: UpdatePost): Promise<Post | undefined>;
+  deletePost(id: number): Promise<boolean>;
+  incrementViews(id: number): Promise<Post | undefined>;
+}
+
+export class DatabaseStorage implements IStorage {
+  constructor() {
+    // Seed database when storage is initialized
+    this.seedPostsIfEmpty().catch(err => {
+      console.error("Error seeding database:", err);
+    });
+  }
+
+  async getAllPosts(): Promise<Post[]> {
+    return db.select().from(posts).orderBy(desc(posts.createdAt));
+  }
+
+  async getPostById(id: number): Promise<Post | undefined> {
+    const [post] = await db.select().from(posts).where(eq(posts.id, id));
+    return post;
+  }
+
+  async getPostsByCategory(category: string): Promise<Post[]> {
+    return db.select().from(posts).where(eq(posts.category, category)).orderBy(desc(posts.createdAt));
+  }
+
+  async createPost(insertPost: InsertPost): Promise<Post> {
+    const [post] = await db.insert(posts).values(insertPost).returning();
+    return post;
+  }
+
+  async updatePost(id: number, updatePost: UpdatePost): Promise<Post | undefined> {
+    const [updatedPost] = await db
+      .update(posts)
+      .set({ ...updatePost, updatedAt: new Date() })
+      .where(eq(posts.id, id))
+      .returning();
+    return updatedPost;
+  }
+
+  async deletePost(id: number): Promise<boolean> {
+    const [deletedPost] = await db
+      .delete(posts)
+      .where(eq(posts.id, id))
+      .returning();
+    return !!deletedPost;
+  }
+
+  async incrementViews(id: number): Promise<Post | undefined> {
+    const post = await this.getPostById(id);
+    
+    if (!post) {
+      return undefined;
+    }
+    
+    const [updatedPost] = await db
+      .update(posts)
+      .set({ 
+        views: post.views + 1,
+        updatedAt: new Date()
+      })
+      .where(eq(posts.id, id))
+      .returning();
+    
+    return updatedPost;
+  }
+  
+  // Function to seed initial data if the database is empty
+  private async seedPostsIfEmpty(): Promise<void> {
+    const result = await db.select().from(posts).limit(1);
+    
+    if (result.length > 0) {
+      console.log('Database already has posts, skipping seed');
+      return;
+    }
+    
+    console.log('Seeding database with initial posts...');
+    const now = new Date();
+    const samplePosts = [
+      {
+        title: "Getting Started with Node.js",
+        content: "Learn the basics of Node.js and how to build server-side applications with JavaScript. This guide covers installation, modules, and creating a simple web server.",
+        category: "Technology",
+        status: "published",
+        imageUrl: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        views: Math.floor(Math.random() * 1500),
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        title: "Express.js Fundamentals",
+        content: "Understanding Express.js, the most popular Node.js framework. Learn routing, middleware, templating engines, and best practices for building REST APIs.",
+        category: "Development",
+        status: "published",
+        imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        views: Math.floor(Math.random() * 1500),
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        title: "Working with MongoDB and Mongoose",
+        content: "Explore MongoDB, a NoSQL database, and Mongoose, an elegant MongoDB object modeling for Node.js. Learn CRUD operations, schema validation, and more.",
+        category: "Database",
+        status: "published",
+        imageUrl: "https://images.unsplash.com/photo-1523437113738-bbd3cc89fb19?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+        views: Math.floor(Math.random() * 1500),
+        createdAt: now,
+        updatedAt: now
+      }
+    ];
+    
+    await db.insert(posts).values(samplePosts);
+    console.log('Database seeded with initial posts');
+  }
+}
+
+// Export a new instance of the database storage
+export const storage = new DatabaseStorage();
